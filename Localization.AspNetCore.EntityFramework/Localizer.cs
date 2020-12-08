@@ -5,7 +5,7 @@ using Microsoft.Extensions.Localization;
 
 namespace Localization.AspNetCore.EntityFramework
 {
-    public class Localizer<T> : IStringLocalizer
+    internal class Localizer<T> : IStringLocalizer
         where T : DbContext
     {
         public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures)
