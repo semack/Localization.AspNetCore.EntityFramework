@@ -4,7 +4,7 @@ namespace Localization.AspNetCore.EntityFramework.Extensions
 {
     public static class ApplicationBuilderExtensions
     {
-        public static IApplicationBuilder UseLocalizer(this IApplicationBuilder app)
+        public static IApplicationBuilder UseLocalization(this IApplicationBuilder app)
         {
             return app;
         }

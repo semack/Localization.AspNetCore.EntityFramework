@@ -9,7 +9,7 @@ namespace Localization.AspNetCore.EntityFramework.Extensions
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddLocalizer<T>(this IServiceCollection services,
+        public static IServiceCollection AddLocalization<T>(this IServiceCollection services,
             Action<LocalizerOptions> setup = null)
             where T : DbContext
         {

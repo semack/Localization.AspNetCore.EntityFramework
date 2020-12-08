@@ -6,7 +6,7 @@ namespace Localization.AspNetCore.EntityFramework.Extensions
 {
     public static class DbContextOptionsBuilderExtensions
     {
-        public static DbContextOptionsBuilder AddLocalizerEntities(this DbContextOptionsBuilder builder)
+        public static DbContextOptionsBuilder UseLocalizationEntities(this DbContextOptionsBuilder builder)
         {
             builder.ReplaceService<IModelCustomizer, LocalizationProviderModelCustomizer>();
             return builder;

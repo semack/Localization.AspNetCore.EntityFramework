@@ -30,7 +30,7 @@ namespace Localization.AspNetCore.EntityFramework.Test
             {
                 options.UseSqlite(
                         Configuration.GetConnectionString("DefaultConnection"))
-                    .AddLocalizerEntities();
+                    .UseLocalizationEntities();
             });
 
             services.AddDatabaseDeveloperPageExceptionFilter();
@@ -38,7 +38,7 @@ namespace Localization.AspNetCore.EntityFramework.Test
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
-            services.AddLocalizer<ApplicationDbContext>();
+            services.AddLocalization<ApplicationDbContext>();
 
             services.Configure<RequestLocalizationOptions>(
                 options =>
@@ -75,8 +75,8 @@ namespace Localization.AspNetCore.EntityFramework.Test
                 app.UseHsts();
             }
 
-            var locOptions = app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>();
-            app.UseRequestLocalization(locOptions.Value);
+            var localizationOptions = app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>();
+            app.UseRequestLocalization(localizationOptions?.Value);
 
             app.UseDefaultFiles();
 
@@ -88,7 +88,7 @@ namespace Localization.AspNetCore.EntityFramework.Test
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.UseLocalizer();
+            app.UseLocalization();
 
             app.UseEndpoints(endpoints =>
             {
