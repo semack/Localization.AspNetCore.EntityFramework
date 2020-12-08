@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Localizer.AspNetCore.EntityFramework", "Localizer.AspNetCore.EntityFramework\Localizer.AspNetCore.EntityFramework.csproj", "{70EBC691-8CF6-4F5D-8EAA-84AC71C349D0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Localizer.AspNetCore.EntityFramework.Test", "Localizer.AspNetCore.EntityFramework.Test\Localizer.AspNetCore.EntityFramework.Test.csproj", "{143DB296-4B34-4FF5-B118-E92981313209}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{70EBC691-8CF6-4F5D-8EAA-84AC71C349D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{70EBC691-8CF6-4F5D-8EAA-84AC71C349D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{70EBC691-8CF6-4F5D-8EAA-84AC71C349D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{70EBC691-8CF6-4F5D-8EAA-84AC71C349D0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{143DB296-4B34-4FF5-B118-E92981313209}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{143DB296-4B34-4FF5-B118-E92981313209}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{143DB296-4B34-4FF5-B118-E92981313209}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{143DB296-4B34-4FF5-B118-E92981313209}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
