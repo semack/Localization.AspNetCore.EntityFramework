@@ -10,8 +10,8 @@
           <e p="LocalizationProviderModelCustomizer.cs" t="Include" />
         </e>
         <e p="Entities" t="Include">
-          <e p="LocalizationResourceEntity.cs" t="Include" />
-          <e p="LocalizationResourceTranslationEntity.cs" t="Include" />
+          <e p="LocalizationResource.cs" t="Include" />
+          <e p="LocalizationResourceTranslation.cs" t="Include" />
         </e>
         <e p="Extensions" t="Include">
           <e p="ApplicationBuilderExtensions.cs" t="Include" />

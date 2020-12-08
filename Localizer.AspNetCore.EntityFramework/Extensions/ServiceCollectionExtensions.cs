@@ -15,17 +15,22 @@ namespace Localizer.AspNetCore.EntityFramework.Extensions
         {
             if (services == null)
                 throw new ArgumentNullException(nameof(services));
-            
+
             services.AddOptions();
-            
+
+            services.TryAdd(new ServiceDescriptor(
+                typeof(LocalizerFactory<>),
+                typeof(LocalizerFactory<>),
+                ServiceLifetime.Singleton));
+
             services.TryAdd(new ServiceDescriptor(
                 typeof(IStringLocalizerFactory),
-                typeof(LocalizerFactory),
+                provider => provider.GetRequiredService<LocalizerFactory<T>>(),
                 ServiceLifetime.Singleton));
-            
+
             if (setup != null)
                 services.Configure(setup);
-            
+
             return services;
         }
     }

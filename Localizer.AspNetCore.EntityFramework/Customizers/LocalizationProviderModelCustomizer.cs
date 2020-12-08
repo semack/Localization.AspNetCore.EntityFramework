@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace Localizer.AspNetCore.EntityFramework.Customizers
 {
-    public class LocalizationProviderModelCustomizer : RelationalModelCustomizer
+    internal class LocalizationProviderModelCustomizer : RelationalModelCustomizer
     {
         public LocalizationProviderModelCustomizer(ModelCustomizerDependencies dependencies) : base(dependencies)
         {
@@ -12,7 +12,7 @@ namespace Localizer.AspNetCore.EntityFramework.Customizers
 
         public override void Customize(ModelBuilder builder, DbContext context)
         {
-            builder.Entity<LocalizationResourceEntity>(entity =>
+            builder.Entity<LocalizationResource>(entity =>
             {
                 entity.ToTable("LocalizationResources");
                 entity.HasKey(p => p.Id);
@@ -27,7 +27,7 @@ namespace Localizer.AspNetCore.EntityFramework.Customizers
                     .IsRequired(false);
             });
 
-            builder.Entity<LocalizationResourceTranslationEntity>(entity =>
+            builder.Entity<LocalizationResourceTranslation>(entity =>
             {
                 entity.ToTable("LocalizationResourceTranslations");
                 entity.HasKey(p => p.Id);
@@ -39,7 +39,7 @@ namespace Localizer.AspNetCore.EntityFramework.Customizers
                 entity.HasOne(p => p.Resource)
                     .WithMany(p => p.Translations)
                     .HasForeignKey(p => p.ResourceId);
-                entity.HasIndex(p => new { p.Language, p.ResourceId })
+                entity.HasIndex(p => new {p.Language, p.ResourceId})
                     .IsUnique();
             });
 

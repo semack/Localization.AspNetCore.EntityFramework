@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Localizer.AspNetCore.EntityFramework.Entities
 {
-    internal class LocalizationResourceEntity
+    internal class LocalizationResource
     {
         public long Id { get; set; }
         public string Author { get; set; }
@@ -13,6 +13,6 @@ namespace Localizer.AspNetCore.EntityFramework.Entities
         public DateTime ModificationDate { get; set; }
         public string ResourceKey { get; set; }
         public string Notes { get; set; }
-        public ICollection<LocalizationResourceTranslationEntity> Translations { get; set; }
+        public ICollection<LocalizationResourceTranslation> Translations { get; set; }
     }
 }

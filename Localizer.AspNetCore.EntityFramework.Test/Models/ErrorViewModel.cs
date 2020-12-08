@@ -1,5 +1,3 @@
-using System;
-
 namespace Localizer.AspNetCore.EntityFramework.Test.Models
 {
     public class ErrorViewModel

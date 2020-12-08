@@ -1,24 +1,31 @@
 using System;
 using Localizer.AspNetCore.EntityFramework.Settings;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
 
 namespace Localizer.AspNetCore.EntityFramework
 {
-    public class LocalizerFactory: IStringLocalizerFactory
+    internal class LocalizerFactory<T> : IStringLocalizerFactory
+        where T : DbContext
     {
         private readonly LocalizerOptions _options;
-        
-        public LocalizerFactory(IOptions<LocalizerOptions> localizerOptions)
+        private readonly IServiceProvider _serviceProvider;
+
+        public LocalizerFactory(
+            IOptions<LocalizerOptions> localizerOptions,
+            IServiceProvider serviceProvider)
         {
-            _options =   localizerOptions == null 
-                ? throw new ArgumentNullException(nameof(localizerOptions)) 
+            _serviceProvider = serviceProvider;
+            _options = localizerOptions == null
+                ? throw new ArgumentNullException(nameof(localizerOptions))
                 : localizerOptions.Value;
         }
-        
+
         public IStringLocalizer Create(Type resourceSource)
         {
-            throw new NotImplementedException();
+            var result = new Localizer<T>();
+            return result;
         }
 
         public IStringLocalizer Create(string baseName, string location)

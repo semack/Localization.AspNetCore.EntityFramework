@@ -1,17 +1,12 @@
-using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Threading.Tasks;
 using Localizer.AspNetCore.EntityFramework.Extensions;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.EntityFrameworkCore;
 using Localizer.AspNetCore.EntityFramework.Test.Data;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -34,16 +29,17 @@ namespace Localizer.AspNetCore.EntityFramework.Test
             services.AddDbContext<ApplicationDbContext>(options =>
             {
                 options.UseSqlite(
-                    Configuration.GetConnectionString("DefaultConnection"))
+                        Configuration.GetConnectionString("DefaultConnection"))
                     .AddLocalizerEntities();
             });
+
             services.AddDatabaseDeveloperPageExceptionFilter();
 
-            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddLocalizer<ApplicationDbContext>();
-            
+
             services.Configure<RequestLocalizationOptions>(
                 options =>
                 {
@@ -55,11 +51,11 @@ namespace Localizer.AspNetCore.EntityFramework.Test
                         new CultureInfo("it-CH")
                     };
 
-                    options.DefaultRequestCulture = new RequestCulture(culture: "en-US", uiCulture: "en-US");
+                    options.DefaultRequestCulture = new RequestCulture("en-US", "en-US");
                     options.SupportedCultures = supportedCultures;
                     options.SupportedUICultures = supportedCultures;
                 });
-            
+
             services.AddControllersWithViews()
                 .AddViewLocalization();
         }
@@ -83,7 +79,7 @@ namespace Localizer.AspNetCore.EntityFramework.Test
             app.UseRequestLocalization(locOptions.Value);
 
             app.UseDefaultFiles();
-            
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
@@ -93,12 +89,12 @@ namespace Localizer.AspNetCore.EntityFramework.Test
             app.UseAuthorization();
 
             app.UseLocalizer();
-            
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    "default",
+                    "{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapRazorPages();
             });
         }
