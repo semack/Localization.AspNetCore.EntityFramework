@@ -2,12 +2,12 @@
     <PropertyGroup>
         <PackageId>Localization.AspNetCore.EntityFramework</PackageId>
         <TargetFramework>net5.0</TargetFramework>
-        <PackageVersion>5.0.*</PackageVersion>
+        <PackageVersion>5.0$(VersionSuffix)</PackageVersion>
         <Title>Localization library for ASP.NET Core</Title>
         <Copyright>© 2020 Andriy S'omak</Copyright>
         <PackageProjectUrl>https://github.com/semack/Localization.AspNetCore.EntityFramework</PackageProjectUrl>
-        <AssemblyVersion>5.0.0.0</AssemblyVersion>
-        <FileVersion>5.0.0.0</FileVersion>
+        <AssemblyVersion>5.0$(VersionSuffix)</AssemblyVersion>
+        <FileVersion>5.0$(VersionSuffix)</FileVersion>
         <SignAssembly>true</SignAssembly>
         <AssemblyOriginatorKeyFile>signingKey.snk</AssemblyOriginatorKeyFile>
         <Description>Database independed ASP.NET Core localization library.</Description>
