@@ -11,6 +11,14 @@ Before using of the library Nuget Package must be installed.
 ## Examples of usage
 The examples are included to the current repository.
 
+## Roadmap
+
+- [x] EF integration
+- [ ] Import
+- [ ] Export
+- [ ] Sync
+- [ ] Admin Controller
+
 ## Configuration
 
 ```c#
@@ -98,6 +106,7 @@ The examples are included to the current repository.
             });
         }
 ```
+
 
 ## License
 Please see [LICENSE.md](LICENSE.md).
