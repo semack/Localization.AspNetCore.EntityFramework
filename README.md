@@ -30,7 +30,7 @@ Please see comments in code below:
             {
                 options.UseSqlite(
                         Configuration.GetConnectionString("DefaultConnection"))
-                     // Adding necessary localization model to exiting context
+                     // Adding necessary localization models to existing database context
                     .UseLocalizationEntities(); 
             });
 
