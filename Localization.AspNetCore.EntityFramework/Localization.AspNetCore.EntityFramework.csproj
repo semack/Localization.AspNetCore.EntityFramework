@@ -11,7 +11,6 @@
         <FileVersion>5.0.0.0</FileVersion>
         <SignAssembly>true</SignAssembly>
         <AssemblyOriginatorKeyFile>signingKey.snk</AssemblyOriginatorKeyFile>
-        <PackageLicenseExpression>ISC</PackageLicenseExpression>
         <Description>Database independed ASP.NET Core localization library.</Description>
         <PackageTags>Localizer Localization DbLocalization SqlLocalization EFLocalizer</PackageTags>
     </PropertyGroup>
