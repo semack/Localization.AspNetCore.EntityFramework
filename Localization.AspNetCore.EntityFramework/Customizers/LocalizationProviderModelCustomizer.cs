@@ -16,15 +16,9 @@ namespace Localization.AspNetCore.EntityFramework.Customizers
             {
                 entity.ToTable("LocalizationResources");
                 entity.HasKey(p => p.Id);
-                entity.Property(p => p.Author)
-                    .HasMaxLength(100)
-                    .IsRequired();
                 entity.Property(p => p.ResourceKey)
                     .HasMaxLength(1000)
                     .IsRequired();
-                entity.Property(p => p.Notes)
-                    .HasMaxLength(3000)
-                    .IsRequired(false);
             });
 
             builder.Entity<LocalizationResourceTranslation>(entity =>

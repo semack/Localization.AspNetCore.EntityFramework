@@ -177,9 +177,7 @@ namespace Localization.AspNetCore.EntityFramework.Factories
                     resource = new LocalizationResource
                     {
                         ResourceKey = resourceKey,
-                        ModificationDate = DateTime.UtcNow,
-                        FromCode = true,
-                        Author = nameof(ILocalizationManager),
+                        Modified = DateTime.UtcNow,
                         Translations = new List<LocalizationResourceTranslation>()
                     };
 
@@ -189,11 +187,11 @@ namespace Localization.AspNetCore.EntityFramework.Factories
                 foreach (var culture in SupportedCultures)
                     if (resource.Translations.All(t => t.Language != culture.Name))
                     {
-                        resource.ModificationDate = DateTime.UtcNow;
+                        resource.Modified = DateTime.UtcNow;
                         resource.Translations.Add(new LocalizationResourceTranslation
                         {
                             Language = culture.Name,
-                            ModificationDate = DateTime.UtcNow
+                            Modified = DateTime.UtcNow
                         });
                     }
 

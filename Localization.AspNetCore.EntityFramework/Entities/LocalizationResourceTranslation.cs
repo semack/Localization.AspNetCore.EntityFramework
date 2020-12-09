@@ -8,7 +8,7 @@ namespace Localization.AspNetCore.EntityFramework.Entities
         public string Language { get; set; }
         public long ResourceId { get; set; }
         public string Value { get; set; }
-        public DateTime ModificationDate { get; set; }
+        public DateTime Modified { get; set; }
         public LocalizationResource Resource { get; set; }
     }
 }
