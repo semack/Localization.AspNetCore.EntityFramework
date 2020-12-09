@@ -29,7 +29,7 @@ The examples are included to the current repository.
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
-            // Registering Localizer and defing its configuration
+            // Registering Localizer and defining its configuration
             services.AddLocalization<ApplicationDbContext>(options =>
             {
                 {
