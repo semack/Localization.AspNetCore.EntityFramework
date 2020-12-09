@@ -6,13 +6,13 @@
         <Title>Localization library for ASP.NET Core</Title>
         <Copyright>© 2020 Andriy S'omak</Copyright>
         <PackageProjectUrl>Localization.AspNetCore.EntityFramework</PackageProjectUrl>
-        <PackageLicenseUrl>https://github.com/semack/Localization.AspNetCore.EntityFramework/blob/master/LICENSE.md</PackageLicenseUrl>
         <AssemblyVersion>5.0.0.0</AssemblyVersion>
         <FileVersion>5.0.0.0</FileVersion>
         <SignAssembly>true</SignAssembly>
         <AssemblyOriginatorKeyFile>signingKey.snk</AssemblyOriginatorKeyFile>
         <Description>Database independed ASP.NET Core localization library.</Description>
         <PackageTags>Localizer Localization DbLocalization SqlLocalization EFLocalizer</PackageTags>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
         <DocumentationFile>bin\Debug\net5.0\DbLocalizationProvider.AspNetCore.xml</DocumentationFile>
