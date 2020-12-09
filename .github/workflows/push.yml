@@ -18,7 +18,7 @@ jobs:
       with:
         dotnet-version: 5.0.100
     - name: Pack
-      run: dotnet pack Localization.AspNetCore.EntityFramework.csproj --configuration Release --no-restore --output 
+      run: dotnet pack Localization.AspNetCore.EntityFramework.csproj --configuration Release --no-restore --output bin/package 
 
 
       
