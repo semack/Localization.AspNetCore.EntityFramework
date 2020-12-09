@@ -10,7 +10,7 @@
         <FileVersion>5.0$(VersionSuffix)</FileVersion>
         <SignAssembly>true</SignAssembly>
         <AssemblyOriginatorKeyFile>signingKey.snk</AssemblyOriginatorKeyFile>
-        <Description>Database independed ASP.NET Core localization library.</Description>
+        <Description>Database independent ASP.NET Core localization library</Description>
         <PackageTags>Localizer Localization DbLocalization SqlLocalization EFLocalizer</PackageTags>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
     </PropertyGroup>
