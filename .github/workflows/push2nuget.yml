@@ -22,5 +22,7 @@ jobs:
     - name: Build
       run: dotnet build --configuration Release --no-restore 
     - name: Pack
-      run: dotnet pack --configuration Release --no-restore 
+      run: dotnet pack --configuration Release --no-restore --output ./nupkgs
+    - name: Push
+      run: dotnet nuget push ./nupkgs/Localization.AspNetCore.EntityFramework.*.nupkg --api-key $NUGET_API_KEY
       
