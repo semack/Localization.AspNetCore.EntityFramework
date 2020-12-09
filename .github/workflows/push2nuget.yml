@@ -17,8 +17,10 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 5.0.100
+    - name: Restore
+      run: dotnet restore --configuration Release
+    - name: Build
+      run: dotnet build --configuration Release --no-restore 
     - name: Pack
-      run: dotnet pack Localization.AspNetCore.EntityFramework.csproj --configuration Release --no-restore --output bin/package 
-
-
+      run: dotnet pack --configuration Release --no-restore 
       
