@@ -1,4 +1,5 @@
-# Localization.AspNetCore.EntityFramework ![development](https://github.com/semack/Localization.AspNetCore.EntityFramework/workflows/development/badge.svg?branch=development) ![Push to NUGET](https://github.com/semack/Localization.AspNetCore.EntityFramework/workflows/Push%20to%20NUGET/badge.svg?branch=master)
+# Localization.AspNetCore.EntityFramework 
+![development](https://github.com/semack/Localization.AspNetCore.EntityFramework/workflows/development/badge.svg?branch=development) ![Push to NUGET](https://github.com/semack/Localization.AspNetCore.EntityFramework/workflows/Push%20to%20NUGET/badge.svg?branch=master)
 
 ## Setup in Startup.cs
 
