@@ -1,20 +1,42 @@
 using System;
 using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
+using Localization.AspNetCore.EntityFramework.Abstract;
 using Microsoft.Extensions.Localization;
 
 namespace Localization.AspNetCore.EntityFramework
 {
-    internal class Localizer<T> : IStringLocalizer
-        where T : DbContext
+    public class Localizer : IStringLocalizer
     {
+        private readonly ILocalizationManager _manager;
+        private readonly string _sourceName;
+
+        public Localizer(ILocalizationManager manager, string sourceName)
+        {
+            _manager = manager;
+            _sourceName = sourceName;
+        }
+
         public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures)
         {
             throw new NotImplementedException();
         }
 
-        public LocalizedString this[string name] => throw new NotImplementedException();
+        public LocalizedString this[string name]
+        {
+            get
+            {
+                var resourceKey = $"{_sourceName}.{name}";
+                return _manager.GetResource(resourceKey);
+            }
+        }
 
-        public LocalizedString this[string name, params object[] arguments] => throw new NotImplementedException();
+        public LocalizedString this[string name, params object[] arguments]
+        {
+            get
+            {
+                var result = string.Format(this[name].Value, arguments);
+                return new LocalizedString(name, result);
+            }
+        }
     }
 }
