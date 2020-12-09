@@ -21,6 +21,8 @@ The examples are included to the current repository.
 
 ## Configuration
 
+Please see comments in code below:
+
 ```c#
         public void ConfigureServices(IServiceCollection services)
         {
@@ -67,7 +69,7 @@ The examples are included to the current repository.
                 .AddViewLocalization();
         }
         
-                public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
