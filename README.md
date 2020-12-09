@@ -1,7 +1,17 @@
 # Localization.AspNetCore.EntityFramework 
 ![development](https://github.com/semack/Localization.AspNetCore.EntityFramework/workflows/development/badge.svg?branch=development) ![Push to NUGET](https://github.com/semack/Localization.AspNetCore.EntityFramework/workflows/Push%20to%20NUGET/badge.svg?branch=master)
 
-## Setup in Startup.cs
+Database independent ASP.NET Core localization library using EntityFramework.
+.
+## Installation
+Before using of the library Nuget Package must be installed.
+
+'Install-Package Localization.AspNetCore.EntityFramework '
+
+## Examples of usage
+The examples are included to the current repository.
+
+## Configuration
 
 ```c#
         public void ConfigureServices(IServiceCollection services)
