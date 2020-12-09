@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Globalization;
+using Localization.AspNetCore.EntityFramework.Enums;
 using Localization.AspNetCore.EntityFramework.Extensions;
 using Localization.AspNetCore.EntityFramework.Test.Data;
 using Microsoft.AspNetCore.Builder;
@@ -38,7 +39,14 @@ namespace Localization.AspNetCore.EntityFramework.Test
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
-            services.AddLocalization<ApplicationDbContext>();
+            services.AddLocalization<ApplicationDbContext>(options =>
+            {
+                {
+                    options.ReturnOnlyKeyIfNotFound = true;
+                    options.CreateNewRecordWhenLocalisedStringDoesNotExist = true;
+                    options.NamingConvention = NamingConventionEnum.Name;
+                }
+            });
 
             services.Configure<RequestLocalizationOptions>(
                 options =>
