@@ -1,14 +1,35 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
     <PropertyGroup>
+        <PackageId>Localization.AspNetCore.EntityFramework</PackageId>
         <TargetFramework>net5.0</TargetFramework>
+        <PackageVersion>5.0.0</PackageVersion>
+        <Title>Localization library for ASP.NET Core</Title>
+        <Copyright>© 2020 Andriy S'omak</Copyright>
+        <PackageProjectUrl>Localization.AspNetCore.EntityFramework</PackageProjectUrl>
+        <PackageLicenseUrl>https://github.com/semack/Localization.AspNetCore.EntityFramework/blob/master/LICENSE.md</PackageLicenseUrl>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
+        <FileVersion>5.0.0.0</FileVersion>
+        <SignAssembly>true</SignAssembly>
+        <AssemblyOriginatorKeyFile>signingKey.snk</AssemblyOriginatorKeyFile>
+        <PackageLicenseExpression>ISC</PackageLicenseExpression>
+        <Description>Database independed ASP.NET Core localization library.</Description>
+        <PackageTags>Localizer Localization DbLocalization SqlLocalization EFLocalizer</PackageTags>
     </PropertyGroup>
-
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+        <DocumentationFile>bin\Debug\net5.0\DbLocalizationProvider.AspNetCore.xml</DocumentationFile>
+        <NoWarn>1701;1702;1591</NoWarn>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+        <DocumentationFile>bin\Release\net5.0\DbLocalizationProvider.AspNetCore.xml</DocumentationFile>
+    </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
         <PackageReference Include="Microsoft.AspNetCore.Localization" Version="2.2.0" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.0" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.0" />
         <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="5.0.0" />
+    </ItemGroup>
+    <ItemGroup>
+      <None Remove="signingKey.snk" />
     </ItemGroup>
 </Project>
