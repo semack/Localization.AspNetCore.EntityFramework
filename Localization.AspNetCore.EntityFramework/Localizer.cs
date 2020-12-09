@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Localization.AspNetCore.EntityFramework.Managers.Abstract;
+using Localization.AspNetCore.EntityFramework.Abstract;
 using Microsoft.Extensions.Localization;
 
 namespace Localization.AspNetCore.EntityFramework
@@ -15,7 +15,7 @@ namespace Localization.AspNetCore.EntityFramework
             _manager = manager;
             _sourceName = sourceName;
         }
-        
+
         public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures)
         {
             throw new NotImplementedException();

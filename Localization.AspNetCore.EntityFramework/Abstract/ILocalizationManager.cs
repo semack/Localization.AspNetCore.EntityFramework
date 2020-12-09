@@ -3,7 +3,7 @@ using System.Globalization;
 using Localization.AspNetCore.EntityFramework.Entities;
 using Microsoft.Extensions.Localization;
 
-namespace Localization.AspNetCore.EntityFramework.Managers.Abstract
+namespace Localization.AspNetCore.EntityFramework.Abstract
 {
     public interface ILocalizationManager
     {

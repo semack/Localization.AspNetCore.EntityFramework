@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics;
-using Localization.AspNetCore.EntityFramework.Managers.Abstract;
+using Localization.AspNetCore.EntityFramework.Abstract;
 using Localization.AspNetCore.EntityFramework.Test.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
