@@ -1,4 +1,4 @@
-name: .NET Core
+name: Push to NUGET
 
 on:
   push:
@@ -18,7 +18,7 @@ jobs:
       with:
         dotnet-version: 5.0.100
     - name: Restore
-      run: dotnet restore --configuration Release
+      run: dotnet restore 
     - name: Build
       run: dotnet build --configuration Release --no-restore 
     - name: Pack
