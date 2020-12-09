@@ -4,7 +4,7 @@
 Database independent ASP.NET Core localization library using EntityFramework.
 
 ## Installation
-Before using of the library Nuget Package must be installed.
+Before using of the library [Nuget Package](https://www.nuget.org/packages/Localization.AspNetCore.EntityFramework/) must be installed. 
 
 `Install-Package Localization.AspNetCore.EntityFramework`
 
