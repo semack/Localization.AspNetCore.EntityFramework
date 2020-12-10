@@ -71,21 +71,20 @@ namespace Localization.AspNetCore.EntityFramework.Factories
             if (string.IsNullOrWhiteSpace(resourceKey))
                 throw new ArgumentException(nameof(resourceKey));
 
-            var values = _cache
+            var result = _cache
                 .SelectMany(r => r.Translations)
                 .Where(t => t.Resource.ResourceKey == resourceKey
                             && t.Language == CurrentLanguage)
                 .Select(p => p.Value)
-                .ToList();
+                .SingleOrDefault();
 
             if (_localizerSettings.CreateNewRecordWhenLocalisedStringDoesNotExist &&
-                values.Count != SupportedCultures.Count)
+                result == null)
             {
-                AddNewResourceKey(resourceKey);
+                AddMissingResourceKeys(resourceKey);
+                result = GetResource(resourceKey);
             }
-
-            var result = values.SingleOrDefault();
-
+            
             if (_localizerSettings.ReturnOnlyKeyIfNotFound && string.IsNullOrWhiteSpace(result))
                 result = resourceKey;
             
@@ -153,7 +152,7 @@ namespace Localization.AspNetCore.EntityFramework.Factories
             }
         }
 
-        private void AddNewResourceKey(string resourceKey)
+        private void AddMissingResourceKeys(string resourceKey)
         {
             using (var scope = _serviceProvider.GetScopedService(out T context))
             {
