@@ -42,8 +42,8 @@ namespace Localization.AspNetCore.EntityFramework.Test
             services.AddLocalization<ApplicationDbContext>(options =>
             {
                 {
-                    options.ReturnOnlyKeyIfNotFound = true;
-                    options.CreateNewRecordWhenLocalisedStringDoesNotExist = true;
+                    options.ReturnKeyNameIfNoTranslation = true;
+                    options.CreateMissingKeysIfNotFound = true;
                     options.NamingConvention = NamingConventionEnum.Name;
                 }
             });

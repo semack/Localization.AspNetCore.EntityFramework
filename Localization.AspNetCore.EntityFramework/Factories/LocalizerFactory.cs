@@ -71,23 +71,28 @@ namespace Localization.AspNetCore.EntityFramework.Factories
             if (string.IsNullOrWhiteSpace(resourceKey))
                 throw new ArgumentException(nameof(resourceKey));
 
-            var result = _cache
+            var item = _cache
                 .SelectMany(r => r.Translations)
                 .Where(t => t.Resource.ResourceKey == resourceKey
                             && t.Language == CurrentLanguage)
-                .Select(p => p.Value)
+                .Select(p => new
+                {
+                    p.Value
+                })
                 .SingleOrDefault();
-
-            if (_localizerSettings.CreateNewRecordWhenLocalisedStringDoesNotExist &&
-                result == null)
+            
+            var result = item?.Value;
+            
+            if (_localizerSettings.CreateMissingKeysIfNotFound &&
+                item == null)
             {
                 AddMissingResourceKeys(resourceKey);
-                result = GetResource(resourceKey);
+                result  = GetResource(resourceKey);
             }
-            
-            if (_localizerSettings.ReturnOnlyKeyIfNotFound && string.IsNullOrWhiteSpace(result))
+
+            if (_localizerSettings.ReturnKeyNameIfNoTranslation && string.IsNullOrWhiteSpace(result))
                 result = resourceKey;
-            
+
             return new LocalizedString(resourceKey, result!);
         }
 
