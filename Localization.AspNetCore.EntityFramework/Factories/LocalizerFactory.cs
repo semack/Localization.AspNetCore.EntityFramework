@@ -46,7 +46,7 @@ namespace Localization.AspNetCore.EntityFramework.Factories
                 using (var scope = _serviceProvider.GetScopedService(out T context))
                 {
                     _cache = context.Set<LocalizationResource>()
-                        .Include(r=>r.Translations)
+                        .Include(r => r.Translations)
                         .AsNoTracking()
                         .ToList();
                 }
@@ -72,19 +72,23 @@ namespace Localization.AspNetCore.EntityFramework.Factories
                 throw new ArgumentException(nameof(resourceKey));
 
             var values = _cache
-                .SelectMany(r=>r.Translations)
+                .SelectMany(r => r.Translations)
                 .Where(t => t.Resource.ResourceKey == resourceKey
                             && t.Language == CurrentLanguage)
                 .Select(p => p.Value)
                 .ToList();
 
-            if (_localizerSettings.CreateNewRecordWhenLocalisedStringDoesNotExist && !values.Any())
+            if (_localizerSettings.CreateNewRecordWhenLocalisedStringDoesNotExist &&
+                values.Count != SupportedCultures.Count)
+            {
                 AddNewResourceKey(resourceKey);
+            }
 
             var result = values.SingleOrDefault();
 
             if (_localizerSettings.ReturnOnlyKeyIfNotFound && string.IsNullOrWhiteSpace(result))
                 result = resourceKey;
+            
             return new LocalizedString(resourceKey, result!);
         }
 
@@ -135,7 +139,7 @@ namespace Localization.AspNetCore.EntityFramework.Factories
                 {
                     var values = context.Set<LocalizationResource>()
                         .AsNoTracking()
-                        .Include(r=>r.Translations)
+                        .Include(r => r.Translations)
                         .Where(r => r.ResourceKey == resourceKey)
                         .ToList();
 
