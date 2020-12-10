@@ -24,7 +24,7 @@ namespace Localization.AspNetCore.EntityFramework.Test.Controllers
 
         public IActionResult Index()
         {
-            var z = _localizer["Test3"];
+            var z = _localizer["Test5"];
             return View();
         }
 

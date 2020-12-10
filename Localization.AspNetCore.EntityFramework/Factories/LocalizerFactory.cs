@@ -6,7 +6,6 @@ using Localization.AspNetCore.EntityFramework.Abstract;
 using Localization.AspNetCore.EntityFramework.Entities;
 using Localization.AspNetCore.EntityFramework.Enums;
 using Localization.AspNetCore.EntityFramework.Extensions;
-using Localization.AspNetCore.EntityFramework.Models;
 using Localization.AspNetCore.EntityFramework.Settings;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
@@ -22,7 +21,7 @@ namespace Localization.AspNetCore.EntityFramework.Factories
         private readonly LocalizerOptions _localizerSettings;
         private readonly RequestLocalizationOptions _requestLocalizationSettings;
         private readonly IServiceProvider _serviceProvider;
-        private List<LocalizationModel> _cache = new List<LocalizationModel>();
+        private List<LocalizationResource> _cache = new List<LocalizationResource>();
 
         public LocalizerFactory(IServiceProvider serviceProvider,
             IOptions<LocalizerOptions> localizerOptions,
@@ -47,15 +46,8 @@ namespace Localization.AspNetCore.EntityFramework.Factories
                 using (var scope = _serviceProvider.GetScopedService(out T context))
                 {
                     _cache = context.Set<LocalizationResource>()
-                        .SelectMany(l => l.Translations)
-                        .Select(t => new LocalizationModel
-                        {
-                            Id = t.Resource.Id,
-                            ResourceId = t.ResourceId,
-                            ResourceKey = t.Resource.ResourceKey,
-                            Language = t.Language,
-                            Value = t.Value
-                        })
+                        .Include(r=>r.Translations)
+                        .AsNoTracking()
                         .ToList();
                 }
             }
@@ -80,7 +72,8 @@ namespace Localization.AspNetCore.EntityFramework.Factories
                 throw new ArgumentException(nameof(resourceKey));
 
             var values = _cache
-                .Where(t => t.ResourceKey == resourceKey
+                .SelectMany(r=>r.Translations)
+                .Where(t => t.Resource.ResourceKey == resourceKey
                             && t.Language == CurrentLanguage)
                 .Select(p => p.Value)
                 .ToList();
@@ -141,16 +134,9 @@ namespace Localization.AspNetCore.EntityFramework.Factories
                 using (var scope = _serviceProvider.GetScopedService(out T context))
                 {
                     var values = context.Set<LocalizationResource>()
+                        .AsNoTracking()
+                        .Include(r=>r.Translations)
                         .Where(r => r.ResourceKey == resourceKey)
-                        .SelectMany(l => l.Translations)
-                        .Select(t => new LocalizationModel
-                        {
-                            Id = t.Resource.Id,
-                            ResourceId = t.ResourceId,
-                            ResourceKey = t.Resource.ResourceKey,
-                            Language = t.Language,
-                            Value = t.Value
-                        })
                         .ToList();
 
                     _cache.Where(m => m.ResourceKey == resourceKey)
