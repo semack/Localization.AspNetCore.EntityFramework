@@ -5,25 +5,23 @@ using System.Linq;
 using Localization.AspNetCore.EntityFramework.Entities;
 using Localization.AspNetCore.EntityFramework.Enums;
 using Localization.AspNetCore.EntityFramework.Extensions;
-using Localization.AspNetCore.EntityFramework.Managers;
 using Localization.AspNetCore.EntityFramework.Settings;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
 
-namespace Localization.AspNetCore.EntityFramework.Factories
+namespace Localization.AspNetCore.EntityFramework.Managers
 {
-    internal class LocalizerFactory<T> : IStringLocalizerFactory, ILocalizationManager
+    internal class LocalizationManager<T> : ILocalizationManager
         where T : DbContext
     {
-        private const string Shared = nameof(Shared);
         private readonly LocalizerOptions _localizerSettings;
         private readonly RequestLocalizationOptions _requestLocalizationSettings;
         private readonly IServiceProvider _serviceProvider;
         private List<LocalizationResource> _cache = new List<LocalizationResource>();
 
-        public LocalizerFactory(IServiceProvider serviceProvider,
+        public LocalizationManager(IServiceProvider serviceProvider,
             IOptions<LocalizerOptions> localizerOptions,
             IOptions<RequestLocalizationOptions> requestLocalizationOptions)
         {
@@ -128,40 +126,6 @@ namespace Localization.AspNetCore.EntityFramework.Factories
         public void Sync()
         {
             throw new NotImplementedException();
-        }
-
-        public IStringLocalizer Create(Type resourceSource)
-        {
-            var sourceName = resourceSource.Name;
-
-            switch (_localizerSettings.NamingConvention)
-            {
-                case NamingConventionEnum.PropertyOnly:
-                    sourceName = Shared;
-                    break;
-                case NamingConventionEnum.FullTypeName:
-                    sourceName = resourceSource.FullName;
-                    break;
-            }
-
-            return new Localizer(this, sourceName);
-        }
-
-        public IStringLocalizer Create(string baseName, string location)
-        {
-            var sourceName = baseName;
-
-            switch (_localizerSettings.NamingConvention)
-            {
-                case NamingConventionEnum.PropertyOnly:
-                    sourceName = Shared;
-                    break;
-                case NamingConventionEnum.FullTypeName:
-                    sourceName = $"{location}_{baseName}";
-                    break;
-            }
-
-            return new Localizer(this, sourceName);
         }
 
         private void UpdateCache(string resourceKey)
