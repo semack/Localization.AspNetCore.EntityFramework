@@ -1,5 +1,5 @@
 using System;
-using Localization.AspNetCore.EntityFramework.Localizers;
+using Localization.AspNetCore.EntityFramework.Factories;
 using Localization.AspNetCore.EntityFramework.Managers;
 using Localization.AspNetCore.EntityFramework.Settings;
 using Microsoft.EntityFrameworkCore;

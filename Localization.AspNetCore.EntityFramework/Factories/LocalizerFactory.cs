@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
 
-namespace Localization.AspNetCore.EntityFramework.Localizers
+namespace Localization.AspNetCore.EntityFramework.Factories
 {
     internal class LocalizerFactory<T> : IStringLocalizerFactory
     where T : DbContext
