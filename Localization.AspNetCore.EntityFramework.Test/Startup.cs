@@ -38,13 +38,16 @@ namespace Localization.AspNetCore.EntityFramework.Test
 
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
-
+            
+            // Registering Localizer and defining its configuration.
+            // Must be called before services.Configure<RequestLocalizationOptions>
+            // and services.AddViewLocalization();
             services.AddLocalization<ApplicationDbContext>(options =>
             {
                 {
-                    options.FallBackBehavior = FallBackBehaviorEnum.DefaultCulture;
-                    options.CreateMissingTranslationsIfNotFound = true;
+                    options.FallBackBehavior = FallBackBehaviorEnum.KeyName;
                     options.NamingConvention = NamingConventionEnum.FullTypeName;
+                    options.CreateMissingTranslationsIfNotFound = true;
                 }
             });
 

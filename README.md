@@ -38,14 +38,16 @@ Please see comments in code below:
 
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
-
-            // Registering Localizer and defining its configuration
+            
+            // Registering Localizer and defining its configuration.
+            // Must be called before services.Configure<RequestLocalizationOptions>
+            // and services.AddViewLocalization();
             services.AddLocalization<ApplicationDbContext>(options =>
             {
                 {
-                    options.ReturnOnlyKeyIfNotFound = true;
-                    options.CreateNewRecordWhenLocalisedStringDoesNotExist = true;
-                    options.NamingConvention = NamingConventionEnum.Name;
+                    options.FallBackBehavior = FallBackBehaviorEnum.DefaultCulture;
+                    options.NamingConvention = NamingConventionEnum.FullTypeName;
+                    options.CreateMissingTranslationsIfNotFound = true;
                 }
             });
 

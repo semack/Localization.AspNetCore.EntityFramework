@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using Localization.AspNetCore.EntityFramework.Factories;
 using Localization.AspNetCore.EntityFramework.Managers;
 using Microsoft.Extensions.Localization;
 
