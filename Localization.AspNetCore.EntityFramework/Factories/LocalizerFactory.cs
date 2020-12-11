@@ -102,7 +102,7 @@ namespace Localization.AspNetCore.EntityFramework.Factories
             
             var result = item?.Value;
             
-            if (_localizerSettings.CreateMissingKeysIfNotFound &&
+            if (_localizerSettings.CreateMissingTranslationsIfNotFound &&
                 item == null)
             {
                 AddMissingResourceKeys(resourceKey);
