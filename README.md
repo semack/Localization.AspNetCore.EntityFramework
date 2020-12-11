@@ -14,8 +14,8 @@ The examples are included to the current repository.
 ## Roadmap
 
 - [x] EF integration
-- [ ] Import
-- [ ] Export
+- [x] Import
+- [x] Export
 - [ ] Sync
 - [ ] Admin Controller
 
