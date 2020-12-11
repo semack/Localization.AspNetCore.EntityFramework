@@ -42,7 +42,7 @@ namespace Localization.AspNetCore.EntityFramework.Test
             services.AddLocalization<ApplicationDbContext>(options =>
             {
                 {
-                    options.ReturnKeyNameIfNoTranslation = true;
+                    options.FallBackBehavior = FallBackBehaviorEnum.DefaultCulture;
                     options.CreateMissingTranslationsIfNotFound = true;
                     options.NamingConvention = NamingConventionEnum.FullTypeName;
                 }

@@ -38,6 +38,7 @@ namespace Localization.AspNetCore.EntityFramework.Factories
         }
 
         private string CurrentLanguage => CultureInfo.CurrentUICulture.Name;
+        private string DefaultLanguage => _requestLocalizationSettings.DefaultRequestCulture.UICulture.Name;
 
         public void ResetCache()
         {
@@ -52,12 +53,12 @@ namespace Localization.AspNetCore.EntityFramework.Factories
                 }
             }
         }
-        
+
         public void Import(IList<LocalizationResource> source)
         {
             if (source == null)
                 throw new ArgumentException(nameof(source));
-            
+
             using (var scope = _serviceProvider.GetScopedService(out T context))
             {
                 //  clear all resources
@@ -66,7 +67,7 @@ namespace Localization.AspNetCore.EntityFramework.Factories
                 // add import
                 context.Set<LocalizationResource>()
                     .AddRange(source);
-                
+
                 context.SaveChanges();
             }
         }
@@ -99,18 +100,30 @@ namespace Localization.AspNetCore.EntityFramework.Factories
                     p.Value
                 })
                 .SingleOrDefault();
-            
-            var result = item?.Value;
-            
-            if (_localizerSettings.CreateMissingTranslationsIfNotFound &&
-                item == null)
-            {
-                AddMissingResourceKeys(resourceKey);
-                result  = GetResource(resourceKey);
-            }
 
-            if (_localizerSettings.ReturnKeyNameIfNoTranslation && string.IsNullOrWhiteSpace(result))
-                result = resourceKey;
+            if (item == null && _localizerSettings.CreateMissingTranslationsIfNotFound)
+                AddMissingResourceKeys(resourceKey);
+
+            var result = item?.Value ?? String.Empty;
+
+            if (string.IsNullOrWhiteSpace(result))
+            {
+                switch (_localizerSettings.FallBackBehavior)
+                {
+                    case FallBackBehaviorEnum.KeyName:
+                        result = resourceKey;
+                        break;
+
+                    case FallBackBehaviorEnum.DefaultCulture:
+                        result = _cache
+                            .SelectMany(r => r.Translations)
+                            .Where(t => t.Resource.ResourceKey == resourceKey
+                                        && t.Language == DefaultLanguage)
+                            .Select(t => t.Value ?? String.Empty)
+                            .SingleOrDefault();
+                        break;
+                }
+            }
 
             return new LocalizedString(resourceKey, result!);
         }
@@ -147,7 +160,7 @@ namespace Localization.AspNetCore.EntityFramework.Factories
                     sourceName = Shared;
                     break;
                 case NamingConventionEnum.FullTypeName:
-                     sourceName = $"{location}_{baseName}";
+                    sourceName = $"{location}_{baseName}";
                     break;
             }
 
