@@ -52,16 +52,35 @@ namespace Localization.AspNetCore.EntityFramework.Factories
                 }
             }
         }
-
-
+        
         public void Import(IList<LocalizationResource> source)
         {
-            throw new NotImplementedException();
+            if (source == null)
+                throw new ArgumentException(nameof(source));
+            
+            using (var scope = _serviceProvider.GetScopedService(out T context))
+            {
+                //  clear all resources
+                context.Set<LocalizationResource>()
+                    .RemoveRange(context.Set<LocalizationResource>());
+                // add import
+                context.Set<LocalizationResource>()
+                    .AddRange(source);
+                
+                context.SaveChanges();
+            }
         }
 
         public IList<LocalizationResource> Export()
         {
-            throw new NotImplementedException();
+            using (var scope = _serviceProvider.GetScopedService(out T context))
+            {
+                var values = context.Set<LocalizationResource>()
+                    .Include(r => r.Translations)
+                    .AsNoTracking()
+                    .ToList();
+                return values;
+            }
         }
 
         public IList<CultureInfo> SupportedCultures => _requestLocalizationSettings.SupportedCultures;
@@ -142,8 +161,8 @@ namespace Localization.AspNetCore.EntityFramework.Factories
                 using (var scope = _serviceProvider.GetScopedService(out T context))
                 {
                     var values = context.Set<LocalizationResource>()
-                        .AsNoTracking()
                         .Include(r => r.Translations)
+                        .AsNoTracking()
                         .Where(r => r.ResourceKey == resourceKey)
                         .ToList();
 
