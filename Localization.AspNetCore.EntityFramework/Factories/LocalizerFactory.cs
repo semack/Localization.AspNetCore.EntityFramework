@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using Localization.AspNetCore.EntityFramework.Abstract;
 using Localization.AspNetCore.EntityFramework.Entities;
 using Localization.AspNetCore.EntityFramework.Enums;
 using Localization.AspNetCore.EntityFramework.Extensions;
+using Localization.AspNetCore.EntityFramework.Managers;
 using Localization.AspNetCore.EntityFramework.Settings;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
@@ -37,7 +37,6 @@ namespace Localization.AspNetCore.EntityFramework.Factories
             ResetCache();
         }
 
-        private string CurrentLanguage => CultureInfo.CurrentUICulture.Name;
         private string DefaultLanguage => _requestLocalizationSettings.DefaultRequestCulture.UICulture.Name;
 
         public void ResetCache()
@@ -86,7 +85,7 @@ namespace Localization.AspNetCore.EntityFramework.Factories
 
         public IList<CultureInfo> SupportedCultures => _requestLocalizationSettings.SupportedCultures;
 
-        public LocalizedString GetResource(string resourceKey)
+        public LocalizedString GetResource(string resourceKey, CultureInfo culture)
         {
             if (string.IsNullOrWhiteSpace(resourceKey))
                 throw new ArgumentException(nameof(resourceKey));
@@ -94,7 +93,7 @@ namespace Localization.AspNetCore.EntityFramework.Factories
             var item = _cache
                 .SelectMany(r => r.Translations)
                 .Where(t => t.Resource.ResourceKey == resourceKey
-                            && t.Language == CurrentLanguage)
+                            && t.Language == culture.Name)
                 .Select(p => new
                 {
                     p.Value
@@ -104,10 +103,9 @@ namespace Localization.AspNetCore.EntityFramework.Factories
             if (item == null && _localizerSettings.CreateMissingTranslationsIfNotFound)
                 AddMissingResourceKeys(resourceKey);
 
-            var result = item?.Value ?? String.Empty;
+            var result = item?.Value ?? string.Empty;
 
             if (string.IsNullOrWhiteSpace(result))
-            {
                 switch (_localizerSettings.FallBackBehavior)
                 {
                     case FallBackBehaviorEnum.KeyName:
@@ -119,11 +117,10 @@ namespace Localization.AspNetCore.EntityFramework.Factories
                             .SelectMany(r => r.Translations)
                             .Where(t => t.Resource.ResourceKey == resourceKey
                                         && t.Language == DefaultLanguage)
-                            .Select(t => t.Value ?? String.Empty)
+                            .Select(t => t.Value ?? string.Empty)
                             .SingleOrDefault();
                         break;
                 }
-            }
 
             return new LocalizedString(resourceKey, result!);
         }

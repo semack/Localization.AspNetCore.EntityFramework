@@ -1,6 +1,6 @@
 using System;
-using Localization.AspNetCore.EntityFramework.Abstract;
 using Localization.AspNetCore.EntityFramework.Factories;
+using Localization.AspNetCore.EntityFramework.Managers;
 using Localization.AspNetCore.EntityFramework.Settings;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;

@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Localization.AspNetCore.EntityFramework.Abstract;
+using System.Globalization;
+using Localization.AspNetCore.EntityFramework.Factories;
+using Localization.AspNetCore.EntityFramework.Managers;
 using Microsoft.Extensions.Localization;
 
 namespace Localization.AspNetCore.EntityFramework
@@ -26,7 +28,7 @@ namespace Localization.AspNetCore.EntityFramework
             get
             {
                 var resourceKey = $"{_sourceName}.{name}";
-                return _manager.GetResource(resourceKey);
+                return _manager.GetResource(resourceKey, CultureInfo.CurrentUICulture);
             }
         }
 
