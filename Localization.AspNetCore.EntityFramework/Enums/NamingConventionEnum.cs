@@ -2,7 +2,7 @@ namespace Localization.AspNetCore.EntityFramework.Enums
 {
     public enum NamingConventionEnum
     {
-        Name,
+        TypeName,
         FullTypeName,
         PropertyOnly
     }

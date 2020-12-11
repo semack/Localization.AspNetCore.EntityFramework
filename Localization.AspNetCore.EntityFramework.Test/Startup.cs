@@ -44,7 +44,7 @@ namespace Localization.AspNetCore.EntityFramework.Test
                 {
                     options.ReturnKeyNameIfNoTranslation = true;
                     options.CreateMissingTranslationsIfNotFound = true;
-                    options.NamingConvention = NamingConventionEnum.Name;
+                    options.NamingConvention = NamingConventionEnum.FullTypeName;
                 }
             });
 

@@ -146,9 +146,9 @@ namespace Localization.AspNetCore.EntityFramework.Factories
                 case NamingConventionEnum.PropertyOnly:
                     sourceName = Shared;
                     break;
-                // case NamingConventionEnum.FullTypeName:
-                //     sourceName = baseName + location;
-                //     break;
+                case NamingConventionEnum.FullTypeName:
+                     sourceName = $"{location}_{baseName}";
+                    break;
             }
 
             return new Localizer(this, sourceName);
