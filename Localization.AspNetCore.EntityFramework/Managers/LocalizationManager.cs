@@ -5,6 +5,7 @@ using System.Linq;
 using Localization.AspNetCore.EntityFramework.Entities;
 using Localization.AspNetCore.EntityFramework.Enums;
 using Localization.AspNetCore.EntityFramework.Extensions;
+using Localization.AspNetCore.EntityFramework.Providers;
 using Localization.AspNetCore.EntityFramework.Settings;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
@@ -19,13 +20,16 @@ namespace Localization.AspNetCore.EntityFramework.Managers
         private readonly LocalizerOptions _localizerSettings;
         private readonly RequestLocalizationOptions _requestLocalizationSettings;
         private readonly IServiceProvider _serviceProvider;
+        private readonly CacheProvider _cacheProvider;
         private List<LocalizationResource> _cache = new List<LocalizationResource>();
 
         public LocalizationManager(IServiceProvider serviceProvider,
+            CacheProvider cacheProvider,
             IOptions<LocalizerOptions> localizerOptions,
             IOptions<RequestLocalizationOptions> requestLocalizationOptions)
         {
             _serviceProvider = serviceProvider;
+            _cacheProvider = cacheProvider;
             _localizerSettings = localizerOptions == null
                 ? throw new ArgumentNullException(nameof(localizerOptions))
                 : localizerOptions.Value;

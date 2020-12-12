@@ -1,6 +1,7 @@
 using System;
 using Localization.AspNetCore.EntityFramework.Factories;
 using Localization.AspNetCore.EntityFramework.Managers;
+using Localization.AspNetCore.EntityFramework.Providers;
 using Localization.AspNetCore.EntityFramework.Settings;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,6 +21,13 @@ namespace Localization.AspNetCore.EntityFramework.Extensions
 
             services.AddOptions();
 
+            services.AddMemoryCache();
+
+            services.TryAdd(new ServiceDescriptor(
+                typeof(CacheProvider),
+                typeof(CacheProvider),
+                ServiceLifetime.Singleton));
+            
             services.TryAdd(new ServiceDescriptor(
                 typeof(LocalizationManager<>),
                 typeof(LocalizationManager<>),
