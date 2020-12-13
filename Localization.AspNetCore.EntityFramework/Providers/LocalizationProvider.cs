@@ -122,6 +122,7 @@ namespace Localization.AspNetCore.EntityFramework.Providers
             using (var scope = _serviceProvider.GetScopedService(out T context))
             {
                 var modificationDate = DateTime.UtcNow;
+                
                 Parallel.ForEach(context.Set<LocalizationResource>()
                         .Include(r => r.Translations),
                     resource =>
@@ -147,6 +148,8 @@ namespace Localization.AspNetCore.EntityFramework.Providers
 
         private void AddMissingResourceKeys(string resourceKey)
         {
+            var modificationDate = DateTime.UtcNow;
+            
             using (var scope = _serviceProvider.GetScopedService(out T context))
             {
                 var resource = context
@@ -159,7 +162,7 @@ namespace Localization.AspNetCore.EntityFramework.Providers
                     resource = new LocalizationResource
                     {
                         ResourceKey = resourceKey,
-                        Modified = DateTime.UtcNow,
+                        Modified = modificationDate,
                         Translations = new List<LocalizationResourceTranslation>()
                     };
 
@@ -171,11 +174,11 @@ namespace Localization.AspNetCore.EntityFramework.Providers
                     {
                         if (resource.Translations.All(t => t.Language != culture.Name))
                         {
-                            resource.Modified = DateTime.UtcNow;
+                            resource.Modified = modificationDate;
                             resource.Translations.Add(new LocalizationResourceTranslation
                             {
                                 Language = culture.Name,
-                                Modified = DateTime.UtcNow
+                                Modified = modificationDate
                             });
                         }
                     });
