@@ -1,7 +1,8 @@
 using System;
-using Localization.AspNetCore.EntityFramework.Enums;
+using Localization.AspNetCore.EntityFramework.Localizers;
 using Localization.AspNetCore.EntityFramework.Providers;
 using Localization.AspNetCore.EntityFramework.Settings;
+using Localization.AspNetCore.EntityFramework.Settings.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;

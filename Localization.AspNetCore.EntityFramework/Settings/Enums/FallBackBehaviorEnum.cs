@@ -1,4 +1,4 @@
-namespace Localization.AspNetCore.EntityFramework.Enums
+namespace Localization.AspNetCore.EntityFramework.Settings.Enums
 {
     public enum FallBackBehaviorEnum
     {

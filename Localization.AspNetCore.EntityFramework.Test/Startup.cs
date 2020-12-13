@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Globalization;
-using Localization.AspNetCore.EntityFramework.Enums;
 using Localization.AspNetCore.EntityFramework.Extensions;
+using Localization.AspNetCore.EntityFramework.Settings.Enums;
 using Localization.AspNetCore.EntityFramework.Test.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;

@@ -1,5 +1,5 @@
 using System;
-using Localization.AspNetCore.EntityFramework.Enums;
+using Localization.AspNetCore.EntityFramework.Settings.Enums;
 
 namespace Localization.AspNetCore.EntityFramework.Settings
 {
