@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using Localization.AspNetCore.EntityFramework.Providers.Interfaces;
 using Microsoft.Extensions.Localization;
 
@@ -19,7 +20,7 @@ namespace Localization.AspNetCore.EntityFramework
 
         public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures)
         {
-            return _provider.GetResources(_sourceName, CultureInfo.CurrentUICulture, includeParentCultures);
+            return Enumerable.Empty<LocalizedString>();
         }
 
         public LocalizedString this[string name]

@@ -10,7 +10,6 @@ namespace Localization.AspNetCore.EntityFramework.Providers.Interfaces
         void Import(IList<LocalizationResource> source);
         IList<LocalizationResource> Export();
         LocalizedString GetResource(string name, CultureInfo culture);
-        IEnumerable<LocalizedString> GetResources(string sourceName, CultureInfo culture, bool includeParentCultures = false);
         void Sync();
     }
 }

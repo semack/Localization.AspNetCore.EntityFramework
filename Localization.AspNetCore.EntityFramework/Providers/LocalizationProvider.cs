@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
 using Localization.AspNetCore.EntityFramework.Entities;
 using Localization.AspNetCore.EntityFramework.Enums;
 using Localization.AspNetCore.EntityFramework.Extensions;
@@ -116,15 +117,31 @@ namespace Localization.AspNetCore.EntityFramework.Providers
             return new LocalizedString(resourceKey, value!);
         }
 
-        public IEnumerable<LocalizedString> GetResources(string sourceName, CultureInfo culture,
-            bool includeParentCultures = false)
-        {
-            throw new NotImplementedException();
-        }
-
         public void Sync()
         {
-            throw new NotImplementedException();
+            using (var scope = _serviceProvider.GetScopedService(out T context))
+            {
+                Parallel.ForEach(context.Set<LocalizationResource>()
+                        .Include(r => r.Translations),
+                    resource =>
+                    {
+                        _requestLocalizationSettings.SupportedCultures.ToList()
+                            .ForEach(culture =>
+                            {
+                                if (resource.Translations.All(t => t.Language != culture.Name))
+                                {
+                                    resource.Modified = DateTime.UtcNow;
+                                    resource.Translations.Add(new LocalizationResourceTranslation
+                                    {
+                                        Language = culture.Name,
+                                        Modified = DateTime.UtcNow
+                                    });
+                                }
+                            });
+                    }
+                );
+                context.SaveChanges();
+            }
         }
 
         private void AddMissingResourceKeys(string resourceKey)
@@ -148,16 +165,19 @@ namespace Localization.AspNetCore.EntityFramework.Providers
                     context.Add(resource);
                 }
 
-                foreach (var culture in _requestLocalizationSettings.SupportedCultures)
-                    if (resource.Translations.All(t => t.Language != culture.Name))
+                _requestLocalizationSettings.SupportedCultures.ToList()
+                    .ForEach(culture =>
                     {
-                        resource.Modified = DateTime.UtcNow;
-                        resource.Translations.Add(new LocalizationResourceTranslation
+                        if (resource.Translations.All(t => t.Language != culture.Name))
                         {
-                            Language = culture.Name,
-                            Modified = DateTime.UtcNow
-                        });
-                    }
+                            resource.Modified = DateTime.UtcNow;
+                            resource.Translations.Add(new LocalizationResourceTranslation
+                            {
+                                Language = culture.Name,
+                                Modified = DateTime.UtcNow
+                            });
+                        }
+                    });
 
                 context.SaveChanges();
             }
