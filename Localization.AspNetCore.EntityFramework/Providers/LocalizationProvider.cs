@@ -5,33 +5,33 @@ using System.Linq;
 using Localization.AspNetCore.EntityFramework.Entities;
 using Localization.AspNetCore.EntityFramework.Enums;
 using Localization.AspNetCore.EntityFramework.Extensions;
-using Localization.AspNetCore.EntityFramework.Providers;
+using Localization.AspNetCore.EntityFramework.Providers.Interfaces;
 using Localization.AspNetCore.EntityFramework.Settings;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
 
-namespace Localization.AspNetCore.EntityFramework.Managers
+namespace Localization.AspNetCore.EntityFramework.Providers
 {
-    internal class LocalizationManager<T> : ILocalizationManager
+    internal class LocalizationProvider<T> : ILocalizationProvider
         where T : DbContext
     {
-        private readonly LocalizerOptions _localizerSettings;
+        private readonly ICacheProvider _cacheProvider;
+        private readonly LocalizerOptions _settings;
         private readonly RequestLocalizationOptions _requestLocalizationSettings;
         private readonly IServiceProvider _serviceProvider;
-        private readonly ICacheProvider _cacheProvider;
 
-        public LocalizationManager(IServiceProvider serviceProvider,
+        public LocalizationProvider(IServiceProvider serviceProvider,
             ICacheProvider cacheProvider,
-            IOptions<LocalizerOptions> localizerOptions,
+            IOptions<LocalizerOptions> localizationOptions,
             IOptions<RequestLocalizationOptions> requestLocalizationOptions)
         {
             _serviceProvider = serviceProvider;
             _cacheProvider = cacheProvider;
-            _localizerSettings = localizerOptions == null
-                ? throw new ArgumentNullException(nameof(localizerOptions))
-                : localizerOptions.Value;
+            _settings = localizationOptions == null
+                ? throw new ArgumentNullException(nameof(localizationOptions))
+                : localizationOptions.Value;
             _requestLocalizationSettings = requestLocalizationOptions == null
                 ? throw new ArgumentNullException(nameof(requestLocalizationOptions))
                 : requestLocalizationOptions.Value;
@@ -39,11 +39,6 @@ namespace Localization.AspNetCore.EntityFramework.Managers
         }
 
         private CultureInfo DefaultCulture => _requestLocalizationSettings.DefaultRequestCulture.UICulture;
-
-        public void ResetCache()
-        {
-            _cacheProvider.Reset();
-        }
 
         public void Import(IList<LocalizationResource> source)
         {
@@ -75,8 +70,6 @@ namespace Localization.AspNetCore.EntityFramework.Managers
             }
         }
 
-        public IList<CultureInfo> SupportedCultures => _requestLocalizationSettings.SupportedCultures;
-
         public LocalizedString GetResource(string resourceKey, CultureInfo culture)
         {
             if (string.IsNullOrWhiteSpace(resourceKey))
@@ -98,15 +91,13 @@ namespace Localization.AspNetCore.EntityFramework.Managers
                         .SingleOrDefault();
 
                     if (item == null)
-                    {
-                        if (_localizerSettings.CreateMissingTranslationsIfNotFound)
+                        if (_settings.CreateMissingTranslationsIfNotFound)
                             AddMissingResourceKeys(resourceKey);
-                    }
 
                     value = item?.Value ?? string.Empty;
 
                     if (string.IsNullOrWhiteSpace(value))
-                        switch (_localizerSettings.FallBackBehavior)
+                        switch (_settings.FallBackBehavior)
                         {
                             case FallBackBehaviorEnum.KeyName:
                                 value = resourceKey;
@@ -123,6 +114,12 @@ namespace Localization.AspNetCore.EntityFramework.Managers
             }
 
             return new LocalizedString(resourceKey, value!);
+        }
+
+        public IEnumerable<LocalizedString> GetResources(string sourceName, CultureInfo culture,
+            bool includeParentCultures = false)
+        {
+            throw new NotImplementedException();
         }
 
         public void Sync()
@@ -151,7 +148,7 @@ namespace Localization.AspNetCore.EntityFramework.Managers
                     context.Add(resource);
                 }
 
-                foreach (var culture in SupportedCultures)
+                foreach (var culture in _requestLocalizationSettings.SupportedCultures)
                     if (resource.Translations.All(t => t.Language != culture.Name))
                     {
                         resource.Modified = DateTime.UtcNow;

@@ -10,7 +10,6 @@ namespace Localization.AspNetCore.EntityFramework.Entities
         public long ResourceId { get; set; }
         public string Value { get; set; }
         public DateTime Modified { get; set; }
-
         [IgnoreDataMember] public LocalizationResource Resource { get; set; }
     }
 }

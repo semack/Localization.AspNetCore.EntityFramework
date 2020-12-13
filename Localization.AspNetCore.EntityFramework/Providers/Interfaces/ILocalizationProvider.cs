@@ -3,15 +3,14 @@ using System.Globalization;
 using Localization.AspNetCore.EntityFramework.Entities;
 using Microsoft.Extensions.Localization;
 
-namespace Localization.AspNetCore.EntityFramework.Managers
+namespace Localization.AspNetCore.EntityFramework.Providers.Interfaces
 {
-    public interface ILocalizationManager
+    public interface ILocalizationProvider
     {
-        IList<CultureInfo> SupportedCultures { get; }
-        void ResetCache();
         void Import(IList<LocalizationResource> source);
         IList<LocalizationResource> Export();
         LocalizedString GetResource(string name, CultureInfo culture);
+        IEnumerable<LocalizedString> GetResources(string sourceName, CultureInfo culture, bool includeParentCultures = false);
         void Sync();
     }
 }

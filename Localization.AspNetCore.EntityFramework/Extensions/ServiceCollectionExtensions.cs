@@ -1,7 +1,7 @@
 using System;
 using Localization.AspNetCore.EntityFramework.Factories;
-using Localization.AspNetCore.EntityFramework.Managers;
 using Localization.AspNetCore.EntityFramework.Providers;
+using Localization.AspNetCore.EntityFramework.Providers.Interfaces;
 using Localization.AspNetCore.EntityFramework.Settings;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,10 +27,10 @@ namespace Localization.AspNetCore.EntityFramework.Extensions
                 typeof(ICacheProvider),
                 typeof(CacheProvider),
                 ServiceLifetime.Singleton));
-            
+
             services.TryAdd(new ServiceDescriptor(
-                typeof(LocalizationManager<>),
-                typeof(LocalizationManager<>),
+                typeof(LocalizationProvider<>),
+                typeof(LocalizationProvider<>),
                 ServiceLifetime.Singleton));
 
             services.TryAdd(new ServiceDescriptor(
@@ -39,13 +39,13 @@ namespace Localization.AspNetCore.EntityFramework.Extensions
                 ServiceLifetime.Singleton));
 
             services.TryAdd(new ServiceDescriptor(
-                typeof(ILocalizationManager),
-                provider=> provider.GetRequiredService<LocalizationManager<T>>(),
+                typeof(ILocalizationProvider),
+                provider => provider.GetRequiredService<LocalizationProvider<T>>(),
                 ServiceLifetime.Singleton));
 
             services.TryAdd(new ServiceDescriptor(
                 typeof(IStringLocalizerFactory),
-                provider=> provider.GetRequiredService<LocalizerFactory<T>>(),
+                provider => provider.GetRequiredService<LocalizerFactory<T>>(),
                 ServiceLifetime.Singleton));
 
             if (setup != null)
