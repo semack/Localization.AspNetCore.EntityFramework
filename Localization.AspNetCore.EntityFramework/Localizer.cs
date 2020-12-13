@@ -4,7 +4,7 @@ using System.Globalization;
 using Localization.AspNetCore.EntityFramework.Managers;
 using Microsoft.Extensions.Localization;
 
-namespace Localization.AspNetCore.EntityFramework.Localizers
+namespace Localization.AspNetCore.EntityFramework
 {
     public class Localizer : IStringLocalizer
     {
