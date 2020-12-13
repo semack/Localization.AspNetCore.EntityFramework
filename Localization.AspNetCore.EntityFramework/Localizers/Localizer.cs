@@ -1,25 +1,26 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using Localization.AspNetCore.EntityFramework.Managers;
+using System.Linq;
+using Localization.AspNetCore.EntityFramework.Providers.Interfaces;
 using Microsoft.Extensions.Localization;
 
-namespace Localization.AspNetCore.EntityFramework
+namespace Localization.AspNetCore.EntityFramework.Localizers
 {
     public class Localizer : IStringLocalizer
     {
-        private readonly ILocalizationManager _manager;
+        private readonly ILocalizationProvider _provider;
         private readonly string _sourceName;
 
-        public Localizer(ILocalizationManager manager, string sourceName)
+        public Localizer(ILocalizationProvider provider, string sourceName)
         {
-            _manager = manager;
+            _provider = provider;
             _sourceName = sourceName;
         }
 
         public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures)
         {
-            throw new NotImplementedException();
+            return Enumerable.Empty<LocalizedString>();
         }
 
         public LocalizedString this[string name]
@@ -27,7 +28,7 @@ namespace Localization.AspNetCore.EntityFramework
             get
             {
                 var resourceKey = $"{_sourceName}.{name}";
-                return _manager.GetResource(resourceKey, CultureInfo.CurrentUICulture);
+                return _provider.GetResource(resourceKey, CultureInfo.CurrentUICulture);
             }
         }
 

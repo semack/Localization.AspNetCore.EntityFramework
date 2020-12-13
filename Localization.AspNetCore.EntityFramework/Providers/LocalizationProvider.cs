@@ -2,36 +2,37 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
 using Localization.AspNetCore.EntityFramework.Entities;
-using Localization.AspNetCore.EntityFramework.Enums;
 using Localization.AspNetCore.EntityFramework.Extensions;
-using Localization.AspNetCore.EntityFramework.Providers;
+using Localization.AspNetCore.EntityFramework.Providers.Interfaces;
 using Localization.AspNetCore.EntityFramework.Settings;
+using Localization.AspNetCore.EntityFramework.Settings.Enums;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
 
-namespace Localization.AspNetCore.EntityFramework.Managers
+namespace Localization.AspNetCore.EntityFramework.Providers
 {
-    internal class LocalizationManager<T> : ILocalizationManager
+    internal class LocalizationProvider<T> : ILocalizationProvider
         where T : DbContext
     {
-        private readonly LocalizerOptions _localizerSettings;
+        private readonly ICacheProvider _cacheProvider;
+        private readonly LocalizerOptions _settings;
         private readonly RequestLocalizationOptions _requestLocalizationSettings;
         private readonly IServiceProvider _serviceProvider;
-        private readonly ICacheProvider _cacheProvider;
 
-        public LocalizationManager(IServiceProvider serviceProvider,
+        public LocalizationProvider(IServiceProvider serviceProvider,
             ICacheProvider cacheProvider,
-            IOptions<LocalizerOptions> localizerOptions,
+            IOptions<LocalizerOptions> localizationOptions,
             IOptions<RequestLocalizationOptions> requestLocalizationOptions)
         {
             _serviceProvider = serviceProvider;
             _cacheProvider = cacheProvider;
-            _localizerSettings = localizerOptions == null
-                ? throw new ArgumentNullException(nameof(localizerOptions))
-                : localizerOptions.Value;
+            _settings = localizationOptions == null
+                ? throw new ArgumentNullException(nameof(localizationOptions))
+                : localizationOptions.Value;
             _requestLocalizationSettings = requestLocalizationOptions == null
                 ? throw new ArgumentNullException(nameof(requestLocalizationOptions))
                 : requestLocalizationOptions.Value;
@@ -39,11 +40,6 @@ namespace Localization.AspNetCore.EntityFramework.Managers
         }
 
         private CultureInfo DefaultCulture => _requestLocalizationSettings.DefaultRequestCulture.UICulture;
-
-        public void ResetCache()
-        {
-            _cacheProvider.Reset();
-        }
 
         public void Import(IList<LocalizationResource> source)
         {
@@ -75,14 +71,12 @@ namespace Localization.AspNetCore.EntityFramework.Managers
             }
         }
 
-        public IList<CultureInfo> SupportedCultures => _requestLocalizationSettings.SupportedCultures;
-
         public LocalizedString GetResource(string resourceKey, CultureInfo culture)
         {
             if (string.IsNullOrWhiteSpace(resourceKey))
                 throw new ArgumentException(nameof(resourceKey));
-            
-            if (!_cacheProvider.TryGetValue(resourceKey, culture,  out var value))
+
+            if (!_cacheProvider.TryGetValue(resourceKey, culture, out var value))
             {
                 using (var scope = _serviceProvider.GetScopedService(out T context))
                 {
@@ -98,32 +92,57 @@ namespace Localization.AspNetCore.EntityFramework.Managers
                         .SingleOrDefault();
 
                     if (item == null)
-                    {
-                        if (_localizerSettings.CreateMissingTranslationsIfNotFound)
+                        if (_settings.CreateMissingTranslationsIfNotFound)
                             AddMissingResourceKeys(resourceKey);
-                    }
 
                     value = item?.Value ?? string.Empty;
-                    
+
                     if (string.IsNullOrWhiteSpace(value))
-                        switch (_localizerSettings.FallBackBehavior)
+                        switch (_settings.FallBackBehavior)
                         {
                             case FallBackBehaviorEnum.KeyName:
                                 value = resourceKey;
                                 break;
 
                             case FallBackBehaviorEnum.DefaultCulture:
-                                return GetResource(resourceKey, DefaultCulture);
+                                if (culture.Name != DefaultCulture.Name)
+                                    return GetResource(resourceKey, DefaultCulture);
+                                break;
                         }
                 }
+
                 _cacheProvider.Set(resourceKey, culture, value);
             }
+
             return new LocalizedString(resourceKey, value!);
         }
 
         public void Sync()
         {
-            throw new NotImplementedException();
+            using (var scope = _serviceProvider.GetScopedService(out T context))
+            {
+                var modificationDate = DateTime.UtcNow;
+                Parallel.ForEach(context.Set<LocalizationResource>()
+                        .Include(r => r.Translations),
+                    resource =>
+                    {
+                        _requestLocalizationSettings.SupportedCultures.ToList()
+                            .ForEach(culture =>
+                            {
+                                if (resource.Translations.All(t => t.Language != culture.Name))
+                                {
+                                    resource.Modified = modificationDate;
+                                    resource.Translations.Add(new LocalizationResourceTranslation
+                                    {
+                                        Language = culture.Name,
+                                        Modified = modificationDate
+                                    });
+                                }
+                            });
+                    }
+                );
+                context.SaveChanges();
+            }
         }
 
         private void AddMissingResourceKeys(string resourceKey)
@@ -147,16 +166,19 @@ namespace Localization.AspNetCore.EntityFramework.Managers
                     context.Add(resource);
                 }
 
-                foreach (var culture in SupportedCultures)
-                    if (resource.Translations.All(t => t.Language != culture.Name))
+                _requestLocalizationSettings.SupportedCultures.ToList()
+                    .ForEach(culture =>
                     {
-                        resource.Modified = DateTime.UtcNow;
-                        resource.Translations.Add(new LocalizationResourceTranslation
+                        if (resource.Translations.All(t => t.Language != culture.Name))
                         {
-                            Language = culture.Name,
-                            Modified = DateTime.UtcNow
-                        });
-                    }
+                            resource.Modified = DateTime.UtcNow;
+                            resource.Translations.Add(new LocalizationResourceTranslation
+                            {
+                                Language = culture.Name,
+                                Modified = DateTime.UtcNow
+                            });
+                        }
+                    });
 
                 context.SaveChanges();
             }

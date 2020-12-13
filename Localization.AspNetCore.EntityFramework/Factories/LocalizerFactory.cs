@@ -1,7 +1,8 @@
 using System;
-using Localization.AspNetCore.EntityFramework.Enums;
-using Localization.AspNetCore.EntityFramework.Managers;
+using Localization.AspNetCore.EntityFramework.Localizers;
+using Localization.AspNetCore.EntityFramework.Providers;
 using Localization.AspNetCore.EntityFramework.Settings;
+using Localization.AspNetCore.EntityFramework.Settings.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
@@ -9,17 +10,17 @@ using Microsoft.Extensions.Options;
 namespace Localization.AspNetCore.EntityFramework.Factories
 {
     internal class LocalizerFactory<T> : IStringLocalizerFactory
-    where T : DbContext
+        where T : DbContext
     {
-        private readonly LocalizationManager<T> _manager;
-        private readonly LocalizerOptions _localizerSettings;
         private const string Shared = nameof(Shared);
+        private readonly LocalizerOptions _settings;
+        private readonly LocalizationProvider<T> _provider;
 
         public LocalizerFactory(IOptions<LocalizerOptions> localizerOptions,
-            LocalizationManager<T> manager)
+            LocalizationProvider<T> manager)
         {
-            _manager = manager ?? throw new ArgumentException(nameof(manager));
-            _localizerSettings = localizerOptions == null
+            _provider = manager ?? throw new ArgumentException(nameof(manager));
+            _settings = localizerOptions == null
                 ? throw new ArgumentNullException(nameof(localizerOptions))
                 : localizerOptions.Value;
         }
@@ -28,7 +29,7 @@ namespace Localization.AspNetCore.EntityFramework.Factories
         {
             var sourceName = resourceSource.Name;
 
-            switch (_localizerSettings.NamingConvention)
+            switch (_settings.NamingConvention)
             {
                 case NamingConventionEnum.PropertyOnly:
                     sourceName = Shared;
@@ -38,14 +39,14 @@ namespace Localization.AspNetCore.EntityFramework.Factories
                     break;
             }
 
-            return new Localizer(_manager, sourceName);
+            return new Localizer(_provider, sourceName);
         }
 
         public IStringLocalizer Create(string baseName, string location)
         {
             var sourceName = baseName;
 
-            switch (_localizerSettings.NamingConvention)
+            switch (_settings.NamingConvention)
             {
                 case NamingConventionEnum.PropertyOnly:
                     sourceName = Shared;
@@ -55,7 +56,7 @@ namespace Localization.AspNetCore.EntityFramework.Factories
                     break;
             }
 
-            return new Localizer(_manager, sourceName);
+            return new Localizer(_provider, sourceName);
         }
     }
 }

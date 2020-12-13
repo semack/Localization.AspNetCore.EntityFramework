@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics;
-using Localization.AspNetCore.EntityFramework.Managers;
+using Localization.AspNetCore.EntityFramework.Providers.Interfaces;
 using Localization.AspNetCore.EntityFramework.Test.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
@@ -9,13 +9,13 @@ namespace Localization.AspNetCore.EntityFramework.Test.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILocalizationManager _localizationManager;
+        private readonly ILocalizationProvider _localizationManager;
         private readonly IStringLocalizer _localizer;
         private readonly ILogger<HomeController> _logger;
 
         public HomeController(ILogger<HomeController> logger,
             IStringLocalizer<HomeController> localizer,
-            ILocalizationManager localizationManager)
+            ILocalizationProvider localizationManager)
         {
             _logger = logger;
             _localizer = localizer;
