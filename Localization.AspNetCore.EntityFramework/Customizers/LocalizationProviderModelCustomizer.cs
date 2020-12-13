@@ -17,8 +17,9 @@ namespace Localization.AspNetCore.EntityFramework.Customizers
                 entity.ToTable("LocalizationResources");
                 entity.HasKey(p => p.Id);
                 entity.Property(p => p.ResourceKey)
-                    .HasMaxLength(1000)
+                    .HasMaxLength(1024)
                     .IsRequired();
+                entity.HasIndex(p => p.ResourceKey);
             });
 
             builder.Entity<LocalizationResourceTranslation>(entity =>
@@ -26,14 +27,14 @@ namespace Localization.AspNetCore.EntityFramework.Customizers
                 entity.ToTable("LocalizationResourceTranslations");
                 entity.HasKey(p => p.Id);
                 entity.Property(p => p.Language)
-                    .HasMaxLength(10)
+                    .HasMaxLength(16)
                     .IsRequired();
                 entity.Property(p => p.Value)
                     .IsRequired(false);
                 entity.HasOne(p => p.Resource)
                     .WithMany(p => p.Translations)
                     .HasForeignKey(p => p.ResourceId);
-                entity.HasIndex(p => new {p.Language, p.ResourceId})
+                entity.HasIndex(p => p.Language)
                     .IsUnique();
             });
 

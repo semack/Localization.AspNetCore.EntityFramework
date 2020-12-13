@@ -20,11 +20,10 @@ namespace Localization.AspNetCore.EntityFramework.Managers
         private readonly LocalizerOptions _localizerSettings;
         private readonly RequestLocalizationOptions _requestLocalizationSettings;
         private readonly IServiceProvider _serviceProvider;
-        private readonly CacheProvider _cacheProvider;
-        private List<LocalizationResource> _cache = new List<LocalizationResource>();
+        private readonly ICacheProvider _cacheProvider;
 
         public LocalizationManager(IServiceProvider serviceProvider,
-            CacheProvider cacheProvider,
+            ICacheProvider cacheProvider,
             IOptions<LocalizerOptions> localizerOptions,
             IOptions<RequestLocalizationOptions> requestLocalizationOptions)
         {
@@ -36,23 +35,14 @@ namespace Localization.AspNetCore.EntityFramework.Managers
             _requestLocalizationSettings = requestLocalizationOptions == null
                 ? throw new ArgumentNullException(nameof(requestLocalizationOptions))
                 : requestLocalizationOptions.Value;
-            ResetCache();
+            _cacheProvider.Reset();
         }
 
-        private string DefaultLanguage => _requestLocalizationSettings.DefaultRequestCulture.UICulture.Name;
+        private CultureInfo DefaultCulture => _requestLocalizationSettings.DefaultRequestCulture.UICulture;
 
         public void ResetCache()
         {
-            lock (_cache)
-            {
-                using (var scope = _serviceProvider.GetScopedService(out T context))
-                {
-                    _cache = context.Set<LocalizationResource>()
-                        .Include(r => r.Translations)
-                        .AsNoTracking()
-                        .ToList();
-                }
-            }
+            _cacheProvider.Reset();
         }
 
         public void Import(IList<LocalizationResource> source)
@@ -91,67 +81,49 @@ namespace Localization.AspNetCore.EntityFramework.Managers
         {
             if (string.IsNullOrWhiteSpace(resourceKey))
                 throw new ArgumentException(nameof(resourceKey));
-
-            var item = _cache
-                .SelectMany(r => r.Translations)
-                .Where(t => t.Resource.ResourceKey == resourceKey
-                            && t.Language == culture.Name)
-                .Select(p => new
+            
+            if (!_cacheProvider.TryGetValue(resourceKey, culture,  out var value))
+            {
+                using (var scope = _serviceProvider.GetScopedService(out T context))
                 {
-                    p.Value
-                })
-                .SingleOrDefault();
+                    var item = context
+                        .Set<LocalizationResource>()
+                        .SelectMany(r => r.Translations)
+                        .Where(t => t.Resource.ResourceKey == resourceKey
+                                    && t.Language == culture.Name)
+                        .Select(p => new
+                        {
+                            p.Value
+                        })
+                        .SingleOrDefault();
 
-            if (item == null && _localizerSettings.CreateMissingTranslationsIfNotFound)
-                AddMissingResourceKeys(resourceKey);
+                    if (item == null)
+                    {
+                        if (_localizerSettings.CreateMissingTranslationsIfNotFound)
+                            AddMissingResourceKeys(resourceKey);
+                    }
 
-            var result = item?.Value ?? string.Empty;
+                    value = item?.Value ?? string.Empty;
+                    
+                    if (string.IsNullOrWhiteSpace(value))
+                        switch (_localizerSettings.FallBackBehavior)
+                        {
+                            case FallBackBehaviorEnum.KeyName:
+                                value = resourceKey;
+                                break;
 
-            if (string.IsNullOrWhiteSpace(result))
-                switch (_localizerSettings.FallBackBehavior)
-                {
-                    case FallBackBehaviorEnum.KeyName:
-                        result = resourceKey;
-                        break;
-
-                    case FallBackBehaviorEnum.DefaultCulture:
-                        result = _cache
-                            .SelectMany(r => r.Translations)
-                            .Where(t => t.Resource.ResourceKey == resourceKey
-                                        && t.Language == DefaultLanguage)
-                            .Select(t => t.Value ?? string.Empty)
-                            .SingleOrDefault();
-                        break;
+                            case FallBackBehaviorEnum.DefaultCulture:
+                                return GetResource(resourceKey, DefaultCulture);
+                        }
                 }
-
-            return new LocalizedString(resourceKey, result!);
+                _cacheProvider.Set(resourceKey, culture, value);
+            }
+            return new LocalizedString(resourceKey, value!);
         }
 
         public void Sync()
         {
             throw new NotImplementedException();
-        }
-
-        private void UpdateCache(string resourceKey)
-        {
-            lock (_cache)
-            {
-                using (var scope = _serviceProvider.GetScopedService(out T context))
-                {
-                    var values = context.Set<LocalizationResource>()
-                        .Include(r => r.Translations)
-                        .AsNoTracking()
-                        .Where(r => r.ResourceKey == resourceKey)
-                        .ToList();
-
-                    _cache.Where(m => m.ResourceKey == resourceKey)
-                        .ToList()
-                        .ForEach(item => { _cache.Remove(item); });
-
-                    if (values.Any())
-                        _cache.AddRange(values);
-                }
-            }
         }
 
         private void AddMissingResourceKeys(string resourceKey)
@@ -187,8 +159,6 @@ namespace Localization.AspNetCore.EntityFramework.Managers
                     }
 
                 context.SaveChanges();
-
-                UpdateCache(resourceKey);
             }
         }
     }

@@ -24,7 +24,7 @@ namespace Localization.AspNetCore.EntityFramework.Extensions
             services.AddMemoryCache();
 
             services.TryAdd(new ServiceDescriptor(
-                typeof(CacheProvider),
+                typeof(ICacheProvider),
                 typeof(CacheProvider),
                 ServiceLifetime.Singleton));
             
