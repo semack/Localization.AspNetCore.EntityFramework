@@ -36,7 +36,6 @@ namespace Localization.AspNetCore.EntityFramework.Providers
             _requestLocalizationSettings = requestLocalizationOptions == null
                 ? throw new ArgumentNullException(nameof(requestLocalizationOptions))
                 : requestLocalizationOptions.Value;
-            _cacheProvider.Reset();
         }
 
         private CultureInfo DefaultCulture => _requestLocalizationSettings.DefaultRequestCulture.UICulture;
