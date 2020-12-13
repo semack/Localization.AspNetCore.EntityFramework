@@ -121,6 +121,7 @@ namespace Localization.AspNetCore.EntityFramework.Providers
         {
             using (var scope = _serviceProvider.GetScopedService(out T context))
             {
+                var modificationDate = DateTime.UtcNow;
                 Parallel.ForEach(context.Set<LocalizationResource>()
                         .Include(r => r.Translations),
                     resource =>
@@ -130,11 +131,11 @@ namespace Localization.AspNetCore.EntityFramework.Providers
                             {
                                 if (resource.Translations.All(t => t.Language != culture.Name))
                                 {
-                                    resource.Modified = DateTime.UtcNow;
+                                    resource.Modified = modificationDate;
                                     resource.Translations.Add(new LocalizationResourceTranslation
                                     {
                                         Language = culture.Name,
-                                        Modified = DateTime.UtcNow
+                                        Modified = modificationDate
                                     });
                                 }
                             });
