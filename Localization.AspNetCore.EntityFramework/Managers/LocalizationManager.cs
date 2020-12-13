@@ -81,8 +81,8 @@ namespace Localization.AspNetCore.EntityFramework.Managers
         {
             if (string.IsNullOrWhiteSpace(resourceKey))
                 throw new ArgumentException(nameof(resourceKey));
-            
-            if (!_cacheProvider.TryGetValue(resourceKey, culture,  out var value))
+
+            if (!_cacheProvider.TryGetValue(resourceKey, culture, out var value))
             {
                 using (var scope = _serviceProvider.GetScopedService(out T context))
                 {
@@ -104,7 +104,7 @@ namespace Localization.AspNetCore.EntityFramework.Managers
                     }
 
                     value = item?.Value ?? string.Empty;
-                    
+
                     if (string.IsNullOrWhiteSpace(value))
                         switch (_localizerSettings.FallBackBehavior)
                         {
@@ -113,11 +113,15 @@ namespace Localization.AspNetCore.EntityFramework.Managers
                                 break;
 
                             case FallBackBehaviorEnum.DefaultCulture:
-                                return GetResource(resourceKey, DefaultCulture);
+                                if (culture.Name != DefaultCulture.Name)
+                                    return GetResource(resourceKey, DefaultCulture);
+                                break;
                         }
                 }
+
                 _cacheProvider.Set(resourceKey, culture, value);
             }
+
             return new LocalizedString(resourceKey, value!);
         }
 
